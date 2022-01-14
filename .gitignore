@@ -6,6 +6,4 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
-test/
-lambda/
-build/
+build

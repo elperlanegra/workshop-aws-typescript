@@ -1,8 +1,8 @@
 {
-  "name": "backend-aws",
+  "name": "tecnasa-restapi-for-android-app",
   "version": "0.1.0",
   "bin": {
-    "backend-aws": "bin/backend-aws.js"
+    "tecnasa-restapi-for-android-app": "bin/tecnasa-restapi-for-android-app.js"
   },
   "scripts": {
     "build": "tsc",
@@ -18,16 +18,18 @@
   "devDependencies": {
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
-    "aws-cdk": "2.5.0",
-    "git-commit-msg-linter": "^3.3.3",
+    "aws-cdk": "2.1.0",
     "jest": "^26.4.2",
     "ts-jest": "^26.2.0",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
   },
   "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.139.0",
+    "@aws-cdk/aws-dynamodb": "^1.139.0",
+    "@aws-cdk/aws-lambda": "^1.139.0",
     "aws-cdk-lib": "2.5.0",
-    "constructs": "^10.0.32",
-    "dotenv": "11.0.0"
+    "constructs": "^10.0.0",
+    "dotenv": "^11.0.0"
   }
 }
