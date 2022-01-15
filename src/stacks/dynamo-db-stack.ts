@@ -9,8 +9,8 @@ interface DynamoDBStackProps extends StackProps {
 
 export class DynamoDBStack extends Stack {
 
-    public userTable: Table;
-    public groupTable: Table;
+    public readonly userTable: Table;
+    public readonly groupTable: Table;
 
     constructor(scope: Construct, id: string, props: DynamoDBStackProps) {
         super(scope, id, props);
@@ -24,6 +24,14 @@ export class DynamoDBStack extends Stack {
             },
             tableName: userTableName,
             removalPolicy: RemovalPolicy.DESTROY
+        });
+
+        this.userTable.addGlobalSecondaryIndex({
+            indexName: 'userNameIndex',
+            partitionKey: {
+                name: 'userName',
+                type: AttributeType.STRING
+            }
         });
 
         const groupTable = `${ props.prefix }-groups`;

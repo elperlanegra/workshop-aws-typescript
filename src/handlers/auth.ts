@@ -2,7 +2,9 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 interface AuthLambdasProps {
+    JWT_KEY: string;
     USER_TABLE_NAME: string;
+    GROUP_TABLE_NAME: string;
 }
 
 export class AuthLambdas {
@@ -17,7 +19,9 @@ export class AuthLambdas {
             code: lambda.Code.fromAsset('build/lambdas'),
             handler: 'auth.login',
             environment: {
-                USER_TABLE_NAME: props.USER_TABLE_NAME
+                USER_TABLE_NAME: props.USER_TABLE_NAME,
+                GROUP_TABLE_NAME: props.GROUP_TABLE_NAME,
+                JWT_KEY: props.JWT_KEY
             }
         });
 
@@ -26,7 +30,8 @@ export class AuthLambdas {
             code: lambda.Code.fromAsset('build/lambdas'),
             handler: 'auth.register',
             environment: {
-                USER_TABLE_NAME: props.USER_TABLE_NAME
+                USER_TABLE_NAME: props.USER_TABLE_NAME,
+                GROUP_TABLE_NAME: props.GROUP_TABLE_NAME
             }
         });
 
