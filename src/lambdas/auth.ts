@@ -157,6 +157,10 @@ export const register = async (event: any): Promise<any> => {
 
         await db.put(registerUserQuery).promise();
 
+        return response(StatusCodes.CREATED, {
+            userId
+        });
+
     } catch(error) {
         console.log(error);
         return(StatusCodes.INTERNAL_SERVER_ERROR, {
