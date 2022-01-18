@@ -31,7 +31,8 @@ export class AuthLambdas {
             handler: 'auth.register',
             environment: {
                 USER_TABLE_NAME: props.USER_TABLE_NAME,
-                GROUP_TABLE_NAME: props.GROUP_TABLE_NAME
+                GROUP_TABLE_NAME: props.GROUP_TABLE_NAME,
+                JWT_KEY: props.JWT_KEY
             }
         });
 
