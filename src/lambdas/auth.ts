@@ -1,18 +1,18 @@
 import * as AWS from 'aws-sdk';
-import { ScanOutput } from 'aws-sdk/clients/dynamodb';
+import {ScanOutput} from 'aws-sdk/clients/dynamodb';
 const passwordHash = require('password-hash');
 const db = new AWS.DynamoDB.DocumentClient();
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 
 import * as jwt from 'jsonwebtoken';
 
 import {
     StatusCodes,
 } from 'http-status-codes';
-import { response } from './services/response-services';
+import {response} from './services/response-services';
 
-import { LoginSchema } from "./validations/login";
-import { RegisterSchema } from './validations/register';
+import {LoginSchema} from "./validations/login";
+import {RegisterSchema} from './validations/register';
 
 const userTableName = process.env.USER_TABLE_NAME;
 const groupTableName = process.env.GROUP_TABLE_NAME;
@@ -30,9 +30,9 @@ interface UserDB extends User {
 
 export const login = async (event: any): Promise<any> => {
 
-    const { body } = event;
+    const {body} = event;
 
-    if(!body) {
+    if (!body) {
         return response(StatusCodes.BAD_REQUEST, {
             message: 'PETICIÓN INCORRECTA'
         });
@@ -42,9 +42,9 @@ export const login = async (event: any): Promise<any> => {
 
     //VALIDAR EL DATOS DE ENTRADA
 
-    const { error } = LoginSchema.validate(payload);
+    const {error} = LoginSchema.validate(payload);
 
-    if(error) {
+    if (error) {
         return response(StatusCodes.BAD_REQUEST, {
             message: error
         });
@@ -63,19 +63,24 @@ export const login = async (event: any): Promise<any> => {
 
         const singleResult = queryResult?.Items?.[0];
 
-        if(!singleResult) return;
+        if (!singleResult) return;
+        if (!singleResult) {
+            return response(StatusCodes.NOT_FOUND, {
+                message: 'Usuario no encontrado'
+            });
+        }
 
         const userDb: any = singleResult;
 
-        if(!userDb) {
+        if (!userDb) {
             return response(StatusCodes.UNAUTHORIZED, {
                 message: 'USUARIO O CONTRASEÑA INCORRECTA'
             });
         }
 
         const isValidPassword = passwordHash.verify(payload.password, userDb.password);
-        
-        if(!isValidPassword) {
+
+        if (!isValidPassword) {
             return response(StatusCodes.UNAUTHORIZED, {
                 message: 'USUARIO O CONTRASEÑA INCORRECTA'
             });
@@ -85,9 +90,9 @@ export const login = async (event: any): Promise<any> => {
             userId: userDb.userId
         };
 
-        const token = jwt.sign(tokenPayload, jwtKey, { expiresIn: '24h' });
-        const refreshToken = jwt.sign(tokenPayload, jwtKey, { expiresIn: '800h' });
-        
+        const token = jwt.sign(tokenPayload, jwtKey, {expiresIn: '24h'});
+        const refreshToken = jwt.sign(tokenPayload, jwtKey, {expiresIn: '800h'});
+
         return response(StatusCodes.OK, {
             token,
             refreshToken
@@ -102,12 +107,12 @@ export const login = async (event: any): Promise<any> => {
     }
 
 
-} 
+}
 
 export const register = async (event: any): Promise<any> => {
-    const { body } = event;
+    const {body} = event;
 
-    if(!body) {
+    if (!body) {
         return response(StatusCodes.BAD_REQUEST, {
             message: 'PETICIÓN INCORRECTA'
         });
@@ -117,9 +122,9 @@ export const register = async (event: any): Promise<any> => {
 
     //VALIDAR EL DATOS DE ENTRADA
 
-    const { error } = RegisterSchema.validate(payload);
+    const {error} = RegisterSchema.validate(payload);
 
-    if(error) {
+    if (error) {
         return response(StatusCodes.BAD_REQUEST, {
             message: error
         });
@@ -136,7 +141,7 @@ export const register = async (event: any): Promise<any> => {
     try {
         const queryResult: ScanOutput = await db.scan(userQuery).promise();
 
-        if(Array.isArray(queryResult.Items) && queryResult.Items.length) {
+        if (Array.isArray(queryResult.Items) && queryResult.Items.length) {
             return response(StatusCodes.CONFLICT, {
                 message: 'USUARIO YA EXISTE'
             });
@@ -144,7 +149,7 @@ export const register = async (event: any): Promise<any> => {
 
         const userId = uuidv4();
 
-        const password = passwordHash.generate(payload.password, { saltLength: 10 });
+        const password = passwordHash.generate(payload.password, {saltLength: 10});
 
         const registerUserQuery: any = {
             TableName: userTableName,
@@ -161,9 +166,9 @@ export const register = async (event: any): Promise<any> => {
             userId
         });
 
-    } catch(error) {
+    } catch (error) {
         console.log(error);
-        return(StatusCodes.INTERNAL_SERVER_ERROR, {
+        return (StatusCodes.INTERNAL_SERVER_ERROR, {
             error
         });
     }

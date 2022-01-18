@@ -15,6 +15,7 @@
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
     "password-hash": "^1.2.2",
+    "tecnasa-restapi-for-android-app": "file:../..",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
