@@ -1,5 +1,7 @@
 import * as AWS from 'aws-sdk';
 import {ScanOutput} from 'aws-sdk/clients/dynamodb';
+import {ResponseErrors} from './services/response-errors';
+
 const passwordHash = require('password-hash');
 const db = new AWS.DynamoDB.DocumentClient();
 const {v4: uuidv4} = require('uuid');
@@ -34,7 +36,7 @@ export const login = async (event: any): Promise<any> => {
 
     if (!body) {
         return response(StatusCodes.BAD_REQUEST, {
-            message: 'PETICIÓN INCORRECTA'
+            message: ResponseErrors.BAD_REQUEST,
         });
     }
 
@@ -63,10 +65,10 @@ export const login = async (event: any): Promise<any> => {
 
         const singleResult = queryResult?.Items?.[0];
 
-        if (!singleResult) return;
+
         if (!singleResult) {
-            return response(StatusCodes.NOT_FOUND, {
-                message: 'Usuario no encontrado'
+            return response(StatusCodes.UNAUTHORIZED, {
+                message: ResponseErrors.UNAUTHORIZED_USER_OR_PASSWORD,
             });
         }
 
@@ -74,7 +76,7 @@ export const login = async (event: any): Promise<any> => {
 
         if (!userDb) {
             return response(StatusCodes.UNAUTHORIZED, {
-                message: 'USUARIO O CONTRASEÑA INCORRECTA'
+                message: ResponseErrors.UNAUTHORIZED_USER_OR_PASSWORD,
             });
         }
 
@@ -82,7 +84,7 @@ export const login = async (event: any): Promise<any> => {
 
         if (!isValidPassword) {
             return response(StatusCodes.UNAUTHORIZED, {
-                message: 'USUARIO O CONTRASEÑA INCORRECTA'
+                message: ResponseErrors.UNAUTHORIZED_USER_OR_PASSWORD,
             });
         }
 
@@ -114,7 +116,7 @@ export const register = async (event: any): Promise<any> => {
 
     if (!body) {
         return response(StatusCodes.BAD_REQUEST, {
-            message: 'PETICIÓN INCORRECTA'
+            message: ResponseErrors.BAD_REQUEST
         });
     }
 
@@ -143,7 +145,7 @@ export const register = async (event: any): Promise<any> => {
 
         if (Array.isArray(queryResult.Items) && queryResult.Items.length) {
             return response(StatusCodes.CONFLICT, {
-                message: 'USUARIO YA EXISTE'
+                message: ResponseErrors.USER_ALREADY_EXISTS,
             });
         }
 
